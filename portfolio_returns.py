@@ -22,14 +22,14 @@ def calculate_end_date(start_date, years = 30):
 
 
 # Function calculating return over time period
-def return_over_time_period(df, start_date, end_date, summer = True):
+def return_over_time_period(df, start_date, end_date, summer = True, get_time_weighted_return = True, get_sharpe_ratio = True):
     '''Function return_over_time_period calculates return over given time period, time weighted rate of return as well as sharpe. 
     
-    The time period is selected based on given input parameters start_date and end_date and makes an investment for all months or excluding summer moths based on the parameter summer. If summer parameter is True we invest in all the months and if not then exclude summer months. 
+    The time period is selected based on given input parameters start_date and end_date and makes an investment for all months or excluding summer moths based on the parameter summer. If summer parameter is True we invest in all the months and if not then exclude summer months. If get_time_weighted_return is True the function calculates it. The same way if get_sharpe_ratio parameter is True function calculates it. The default value for both get_time_weighted_return as well as get_sharpe_ratio is True.
     
     The default value for Summer parameter is set to True. 
     The function returns time_weighted_return,total return over a given time period and sharpe ratio.'''
-    
+
     required_df = df[(df['date_ff_factors'] >= start_date) & (df['date_ff_factors'] < end_date)].reset_index(drop = True)
     # Adding a column which shows $1000 investment monthly or $1333.33 if excluding summer months
     if summer:
@@ -53,21 +53,34 @@ def return_over_time_period(df, start_date, end_date, summer = True):
     for i in range(len(required_df)):
         if i == 0:
             required_df.loc[i, 'Monthly_Return'] = required_df.loc[i, 'Investment_Amt']*(1 + required_df.iloc[i,1] + required_df.iloc[i,4])
-            if required_df.loc[i, 'Investment_Amt'] == 0:
-                required_df.loc[i, 'Holding_Period_Return'] = 0
-            else:
-                required_df.loc[i, 'Holding_Period_Return'] = (required_df.loc[i, 'Monthly_Return'] - required_df.loc[i, 'Investment_Amt'])/required_df.loc[i,'Investment_Amt']
+            # Checking if time_weighted_return is true
+            if get_time_weighted_return:
+                if required_df.loc[i, 'Investment_Amt'] == 0:
+                    required_df.loc[i, 'Holding_Period_Return'] = 0
+                else:
+                    required_df.loc[i, 'Holding_Period_Return'] = (required_df.loc[i, 'Monthly_Return'] - required_df.loc[i, 'Investment_Amt'])/required_df.loc[i,'Investment_Amt']
         else:
             required_df.loc[i, 'Monthly_Return'] = (required_df.loc[i, 'Investment_Amt']+required_df.loc[i-1, 'Monthly_Return'])*(1 + required_df.iloc[i,1] + required_df.iloc[i,4])
             
             numerator = (required_df.loc[i, 'Monthly_Return'] - (required_df.loc[i,'Investment_Amt'] + required_df.loc[i-1,'Monthly_Return']))
             denominator = (required_df.loc[i,'Investment_Amt'] + required_df.loc[i-1,'Monthly_Return'])
-            if denominator == 0:
-                required_df.loc[i, 'Holding_Period_Return'] = 0
-            else:
-                required_df.loc[i, 'Holding_Period_Return'] = numerator/denominator
-                
-    time_weighted_return = np.prod(required_df['Holding_Period_Return'].values + 1)
-    sharpe_ratio = required_df['Mkt-RF'].mean()/required_df['Mkt-RF'].std()
 
-    return round(time_weighted_return,3), round(required_df.iloc[-1,-2], 3), round(sharpe_ratio, 3)
+            if get_time_weighted_return:
+                if denominator == 0:
+                    required_df.loc[i, 'Holding_Period_Return'] = 0
+                else:
+                    required_df.loc[i, 'Holding_Period_Return'] = numerator/denominator
+
+    if get_time_weighted_return:            
+        time_weighted_return = np.prod(required_df['Holding_Period_Return'].values + 1)
+    if get_sharpe_ratio:
+        sharpe_ratio = required_df['Mkt-RF'].mean()/required_df['Mkt-RF'].std()
+    
+    if get_time_weighted_return and get_sharpe_ratio:
+        return round(time_weighted_return,3), round(required_df.iloc[-1,-2], 3), round(sharpe_ratio, 3)
+    elif get_time_weighted_return and not get_sharpe_ratio:
+        return round(time_weighted_return,3), round(required_df.iloc[-1,-2], 3)
+    elif get_sharpe_ratio and not get_time_weighted_return:
+        return round(required_df.iloc[-1,-2], 3), round(sharpe_ratio, 3)
+    else:
+        return round(required_df.iloc[-1,-2], 3)
