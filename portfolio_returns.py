@@ -84,3 +84,25 @@ def return_over_time_period(df, start_date, end_date, summer = True, get_time_we
         return round(required_df.iloc[-1,-2], 3), round(sharpe_ratio, 3)
     else:
         return round(required_df.iloc[-1,-2], 3)
+    
+# Function for plotting 
+def visualization(monthly_returns):   
+    '''
+    This Function takes in array of monthly_returns and plots distribution as well as the statstical parameters
+    ''' 
+    fig, ax = plt.subplots(1,1)
+    sns.histplot(monthly_returns, kde=True, bins = 50, ax=ax)
+    monthly_returns_mean = monthly_returns.mean()
+    monthly_returns_median = np.median(monthly_returns)
+    monthly_returns_std = monthly_returns.std()
+    monthly_returns_95_lower = np.percentile(monthly_returns, 2.5)
+    monthly_returns_95_upper = np.percentile(monthly_returns, 97.5)
+
+    y_lims = ax.get_ylim()
+    ax.plot(np.zeros(10) + monthly_returns_mean, np.linspace(y_lims[0], y_lims[1], 10), 'r--')
+    ax.plot(np.zeros(10) + monthly_returns_median, np.linspace(y_lims[0], y_lims[1], 10), 'g--')
+    ax.plot(np.zeros(10) + monthly_returns_95_lower, np.linspace(y_lims[0], y_lims[1], 10), 'y--')
+    ax.plot(np.zeros(10) + monthly_returns_95_upper, np.linspace(y_lims[0], y_lims[1], 10), 'y--')
+
+    plt.legend(['Dist', f'Mean: {monthly_returns_mean:.2f}', f'Median: {monthly_returns_median:.2f}'])
+    return fig, ax
