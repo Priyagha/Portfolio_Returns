@@ -25,7 +25,7 @@ def calculate_end_date(start_date, years = 30):
 def return_over_time_period(df, start_date, end_date, summer = True, get_time_weighted_return = True, get_sharpe_ratio = True):
     '''Function return_over_time_period calculates return over given time period, time weighted rate of return as well as sharpe. 
     
-    The time period is selected based on given input parameters start_date and end_date and makes an investment for all months or excluding summer moths based on the parameter summer. If summer parameter is True we invest in all the months and if not then exclude summer months. If get_time_weighted_return is True the function calculates it. The same way if get_sharpe_ratio parameter is True function calculates it. The default value for both get_time_weighted_return as well as get_sharpe_ratio is True.
+    The time period is selected based on given input parameters `start_date` and end_date and makes an investment for all months or excluding summer moths based on the parameter summer. If summer parameter is True we invest in all the months and if not then exclude summer months. If get_time_weighted_return is True the function calculates it. The same way if get_sharpe_ratio parameter is True function calculates it. The default value for both get_time_weighted_return as well as get_sharpe_ratio is True.
     
     The default value for Summer parameter is set to True. 
     The function returns time_weighted_return,total return over a given time period and sharpe ratio.'''
@@ -104,5 +104,5 @@ def visualization(monthly_returns):
     ax.plot(np.zeros(10) + monthly_returns_95_lower, np.linspace(y_lims[0], y_lims[1], 10), 'y--')
     ax.plot(np.zeros(10) + monthly_returns_95_upper, np.linspace(y_lims[0], y_lims[1], 10), 'y--')
 
-    plt.legend(['Dist', f'Mean: {monthly_returns_mean:.2f}', f'Median: {monthly_returns_median:.2f}'])
+    plt.legend(['Dist', f'Mean: {monthly_returns_mean:.0f}', f'Median: {monthly_returns_median:.0f}'])
     return fig, ax
