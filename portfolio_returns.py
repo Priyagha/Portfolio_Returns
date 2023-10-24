@@ -15,7 +15,7 @@ import os
 # Function Calculating End Date
 def calculate_end_date(start_date, years = 30):
     '''
-    calculates the end date given start_date as a positional parameter and years as an optional parameter and returns end_date as datetime object.
+    Calculates the end date given `start_date` as a positional parameter and `years` as an optional parameter which has a default value of 30 and returns end_date as datetime object.
     '''
     end_date = start_date + relativedelta(years = years)
     return end_date
@@ -25,10 +25,11 @@ def calculate_end_date(start_date, years = 30):
 def return_over_time_period(df, start_date, end_date, summer = True, get_time_weighted_return = True, get_sharpe_ratio = True):
     '''Function return_over_time_period calculates return over given time period, time weighted rate of return as well as sharpe. 
     
-    The time period is selected based on given input parameters `start_date` and end_date and makes an investment for all months or excluding summer moths based on the parameter summer. If summer parameter is True we invest in all the months and if not then exclude summer months. If get_time_weighted_return is True the function calculates it. The same way if get_sharpe_ratio parameter is True function calculates it. The default value for both get_time_weighted_return as well as get_sharpe_ratio is True.
+    The time period is selected based on given input parameters `start_date` and `end_date` and makes an investment for all months or excluding summer months based on the parameter `summer`. If `summer` parameter is `True` we invest in all the months or else exclude summer months. The default value of `summer` is `True`.
     
-    The default value for Summer parameter is set to True. 
-    The function returns time_weighted_return,total return over a given time period and sharpe ratio.'''
+    If `get_time_weighted_return` is `True` the function calculates it. The same way if `get_sharpe_ratio` parameter is `True` function calculates it. The default value for both `get_time_weighted_return` as well as `get_sharpe_ratio` is `True`.
+
+    The function returns time_weighted_return, total return over a given time period and sharpe ratio.'''
 
     required_df = df[(df['date_ff_factors'] >= start_date) & (df['date_ff_factors'] < end_date)].reset_index(drop = True)
     # Adding a column which shows $1000 investment monthly or $1333.33 if excluding summer months
@@ -88,7 +89,7 @@ def return_over_time_period(df, start_date, end_date, summer = True, get_time_we
 # Function for plotting 
 def visualization(monthly_returns):   
     '''
-    This Function takes in array of monthly_returns and plots distribution as well as the statstical parameters
+    This Function takes in array of `monthly_returns` and plots distribution as well as the statstical parameters
     ''' 
     fig, ax = plt.subplots(1,1)
     sns.histplot(monthly_returns, kde=True, bins = 50, ax=ax)
